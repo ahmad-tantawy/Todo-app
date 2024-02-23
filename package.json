@@ -1,0 +1,19 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "A final task for the Javascript Track.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ahmad-tantawy/Todo-app.git"
+  },
+  "author": "Ahmad Tantawy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ahmad-tantawy/Todo-app/issues"
+  },
+  "homepage": "https://github.com/ahmad-tantawy/Todo-app#readme"
+}

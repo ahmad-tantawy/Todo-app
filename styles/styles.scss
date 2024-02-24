@@ -1,0 +1,70 @@
+// Global Styles
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-size: 18px;
+	font-family:
+		Josefin Sans,
+		sans-serif,
+		serif;
+}
+
+.container {
+	max-width: 38%;
+	margin: 0 auto;
+	border: 1px solid red; // jsut for development
+}
+
+.btn {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background-color: transparent;
+	cursor: pointer;
+}
+
+// App Styles
+.app {
+	width: 100vw;
+	height: 37.5vh;
+	background: url('../images/bg-desktop-light.jpg') no-repeat;
+	background-size: cover;
+	// header
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		padding-top: 60px;
+	}
+	&__logo {
+		font-size: 31px;
+		color: #fff;
+		font-weight: 700;
+		letter-spacing: 13px;
+		text-transform: uppercase;
+	}
+	&__theme-toggle img {
+		width: 22px;
+		height: 22px;
+	}
+	// search-bar
+	&__search-bar {
+		width: 100%;
+		padding: 15px 15px;
+		margin-top: 30px;
+		background-color: #fff;
+		border-radius: 5px;
+		&__content {
+			display: flex;
+		}
+		&__button {
+			width: 20px;
+			height: 20px;
+			border: 1px solid #d2d3db;
+			border-radius: 50%;
+		}
+	}
+}

@@ -39,22 +39,33 @@
 							id="search-input"
 							class="app__search-bar__input"
 							type="text"
-							placeholder="create a new todo.."
+							placeholder="Create a new todo.."
 							required
 						/>
 					</form>
 				</div>
 				<!-- TaskList -->
 				<div class="app__task-list">
-					<ul class="app__task-list__list"></ul>
+					<ul class="app__task-list__list">
+						<!-- Just for test and initial CSS classes -->
+						<li>
+							<label class="list-item">
+								<input class="checkbox" type="checkbox" />
+								<span class="todo-text">بسم الله الرحمن الرحيم</span>
+							</label>
+							<span class="remove"></span>
+						</li>
+					</ul>
 					<div class="app__task-list__footer">
-						<p class="app__task-list__footer__number-of-items">items left</p>
-						<div class="app__task-list__footer__action-buttons">
+						<p class="app__task-list__footer__items">
+							<span class="items--number">0</span>items left
+						</p>
+						<div class="app__task-list__footer__buttons">
 							<button class="all-button">All</button>
 							<button class="active-button">Active</button>
 							<button class="complete-button">Completed</button>
+							<button class="clear-button">Clear Completed</button>
 						</div>
-						<button class="clear-button">Clear Completed</button>
 					</div>
 				</div>
 			</div>
@@ -62,9 +73,7 @@
 
 		<!-- Footer Part -->
 		<section class="footer">
-			<div class="container">
-				<p>Drag and drop to reorder list</p>
-			</div>
+			<p>Drag and drop to reorder list</p>
 		</section>
 	</body>
 </html>

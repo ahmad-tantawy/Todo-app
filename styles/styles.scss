@@ -166,6 +166,11 @@ body,
 					background-position: center;
 					text-decoration: line-through;
 					border: none;
+					& ~ .todo-text {
+						text-decoration: line-through;
+						color: hsl(234, 11%, 52%);
+						opacity: 0.5;
+					}
 				}
 				.todo-text {
 					display: inline-block;
@@ -195,11 +200,45 @@ body,
 
 // footer Styles
 .footer {
-	height: 62.5vh;
+	min-height: 62.5vh;
 	display: flex;
 	justify-content: center;
 	align-items: flex-end;
 	& p {
 		margin-bottom: 3rem;
+	}
+}
+
+// DarkTheme
+.App--isDark {
+	color: var(--dark-grayish-blue);
+	background-color: var(--very-dark-blue);
+
+	.app {
+		background: url('../images/bg-desktop-dark.jpg') no-repeat;
+		background-size: cover;
+		.app__search-bar {
+			background-color: var(--very-dark-desaturated-blue);
+			&__input {
+				color: var(--light-grayish-blue);
+				background: transparent;
+			}
+		}
+		.app__task-list {
+			box-shadow: none;
+		}
+		.app__task-list__list {
+			border-radius: 0.5rem 0.5rem 0 0;
+			& .todo-text {
+				color: var(--light-grayish-blue);
+			}
+		}
+		.app__task-list__list label {
+			background-color: var(--very-dark-desaturated-blue);
+		}
+		.app__task-list__footer {
+			border-radius: 0 0 0.5rem 0.5rem;
+			background-color: var(--very-dark-desaturated-blue);
+		}
 	}
 }

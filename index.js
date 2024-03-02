@@ -1,6 +1,86 @@
 import {
-  appThemetoggleElement, bodyElement, appThemetoggleElementImage, addTaskButton,
+  appThemetoggleElement,
+  bodyElement,
+  appThemetoggleElementImage,
+  addTaskButton,
+  inputElement,
+  taskListElement,
+  getDeleteElements,
 } from './scripts/elements';
+
+// fetchData
+const fetchData = (key) => {
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : false;
+};
+
+// SaveToDB
+const saveToDB = (key, data) => {
+  localStorage.setItem(key, JSON.stringify(data));
+};
+
+/* eslint-disable */
+// DeleteTask
+const deleteTask = (index) => {
+  const answer = confirm('Are you sure you want to delete?');
+  if (answer === false) return;
+
+  const tasks = fetchData('tasks');
+  tasks.splice(index, 1);
+
+  saveToDB('tasks', tasks);
+  renderTaskList(tasks);
+  initTaskListeners();
+};
+/* eslint-enable */
+
+// RenderTaskList
+const renderTaskList = (tasks) => {
+  let taskList = '';
+  tasks.forEach((item) => {
+    const checkedAttribute = item.isCompleted ? 'checked' : '';
+
+    taskList += `
+    <li>
+        <label class="list-item">
+          <input class="checkbox" type="checkbox" ${checkedAttribute}/>
+          <span class="todo-text">${item.value}</span>
+          </label>
+          <span class="remove"></span>
+    </li>`;
+  });
+  taskListElement.innerHTML = taskList;
+  inputElement.value = '';
+};
+
+// InitTaskListeners Function
+const initTaskListeners = () => {
+  const deleteElements = getDeleteElements();
+
+  deleteElements.forEach((element, index) => {
+    element.addEventListener('click', () => deleteTask(index));
+  });
+};
+
+// AddTask Function
+const addTask = (event) => {
+  event.preventDefault();
+  const taskValue = inputElement.value;
+
+  if (!taskValue) return;
+
+  const task = {
+    value: taskValue,
+    isCompleted: false,
+  };
+
+  const tasks = fetchData('tasks') || [];
+  tasks.push(task);
+  saveToDB('tasks', tasks);
+
+  renderTaskList(tasks);
+  initTaskListeners();
+};
 
 // DarkTheme
 // Store the old and new image sources
@@ -21,47 +101,4 @@ appThemetoggleElement.addEventListener('click', () => {
   }
 });
 
-// SaveToDB
-const saveToDB = (key, data) => {
-  localStorage.setItem(key, JSON.stringify(data));
-};
-
-// fetchData
-// const fetchData = (key) => {
-//   const data = localStorage.getItem(key);
-//   return data ? JSON.parse(data) : false;
-// };
-
-// AddTask Function
-const addTask = (event) => {
-  event.preventDefault();
-  const inputElement = document.querySelector('.app__search-bar__input');
-  const taskValue = inputElement.value;
-
-  if (!taskValue) return;
-
-  saveToDB('tasks', taskValue);
-  const taskListElement = document.querySelector('.app__task-list__list');
-  taskListElement.innerHTML += `<li>
-      <label class="list-item">
-         <input class="checkbox" type="checkbox" />
-         <span class="todo-text">${taskValue}</span>
-      </label>
-      <span class="remove"></span>
-  </li>`;
-  inputElement.value = '';
-};
-
 addTaskButton.addEventListener('click', addTask);
-
-/**
- * DarkTheme
- * Tasks
-    _saveToDB
-    _initDataonStartup
-    _renderTaskList
-    _addTask
-    _deleteTask
-    _toggleTask
-    _toggleCompletedTask
- */

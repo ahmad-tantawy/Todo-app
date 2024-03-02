@@ -177,6 +177,20 @@ body,
 					margin-left: 3.5rem;
 				}
 			}
+			li {
+				position: relative;
+				display: flex;
+				align-items: center;
+				&:hover .remove {
+					position: absolute;
+					width: 2rem;
+					height: 2rem;
+					right: 1.5rem;
+					background: url('../images/icon-cross.svg') no-repeat;
+					background-size: cover;
+					cursor: pointer;
+				}
+			}
 		}
 		&__footer {
 			display: flex;

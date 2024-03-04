@@ -158,23 +158,12 @@ body,
 					height: 2rem;
 					border-radius: 50%;
 					border: 0.01rem solid #d2d3db;
-				}
-				.checkbox:checked {
-					background: url('../images/icon-check.svg'),
-						linear-gradient(to right, #57ddff, #c058f3);
-					background-repeat: no-repeat;
-					background-position: center;
-					text-decoration: line-through;
-					border: none;
-					& ~ .todo-text {
-						text-decoration: line-through;
-						color: hsl(234, 11%, 52%);
-						opacity: 0.5;
-					}
+					transition: all var(--transition-timing);
 				}
 				.todo-text {
 					display: inline-block;
 					margin-left: 3.5rem;
+					transition: all var(--transition-timing);
 				}
 			}
 			li {
@@ -190,6 +179,28 @@ body,
 					background-size: cover;
 					cursor: pointer;
 				}
+			}
+			.List__isCompleted {
+				.checkbox {
+					background: url('../images/icon-check.svg'),
+						linear-gradient(to right, #57ddff, #c058f3);
+					background-repeat: no-repeat;
+					background-position: center;
+					text-decoration: line-through;
+					border: none;
+					& ~ .todo-text {
+						text-decoration: line-through;
+						color: hsl(234, 11%, 52%);
+						opacity: 0.5;
+					}
+				}
+			}
+			.emptyState {
+				text-align: center;
+				font-size: var(--font-size-14);
+				padding: 1.7rem 1.5rem;
+				border-bottom: 0.01rem solid #d2d3db;
+				background-color: var(--color-white);
 			}
 		}
 		&__footer {
@@ -245,6 +256,9 @@ body,
 			border-radius: 0.5rem 0.5rem 0 0;
 			& .todo-text {
 				color: var(--light-grayish-blue);
+			}
+			.emptyState {
+				background-color: var(--very-dark-desaturated-blue);
 			}
 		}
 		.app__task-list__list label {

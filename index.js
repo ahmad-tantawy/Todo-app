@@ -7,6 +7,9 @@ import {
   taskListElement,
   getDeleteElements,
   getListItemElements,
+  itemsLeftElement,
+  clearButtonElement,
+  filterButtonElements,
 } from './scripts/elements';
 
 // fetchData
@@ -33,12 +36,39 @@ const deleteTask = (index) => {
   initTaskList(tasks);
 };
 
+// DeleteCompletedTask
+const deleteCompletedTasks = () => {
+  const tasks = fetchData('tasks') || [];
+  const newTasks = tasks.filter((task) => !task.isCompleted);
+  saveToDB('tasks', newTasks);
+  initTaskList(fetchData('tasks'));
+};
+
+// FilterListElement
+const filterTasks = (button) => {
+  const tasks = fetchData('tasks') || [];
+  if (tasks.length === 0) return;
+  
+  let newTasks = [];
+  if (button == 'Completed') {
+    newTasks = tasks.filter((task) => task.isCompleted);
+  } else if (button == 'Active') {
+    newTasks = tasks.filter((task) => !task.isCompleted);
+  } else if (button == 'Clear Completed') {
+    deleteCompletedTasks();
+    return;
+  } else {
+    newTasks = tasks;
+  }
+  initTaskList(newTasks);
+};
+
 // RenderTaskList
 const renderTaskList = (tasks) => {
   let taskList = '';
   tasks.forEach((item) => {
     taskList += `
-    <li class="${item.isCompleted ? "List__isCompleted" : "List__isActive"}">
+    <li class="${item.isCompleted ? 'List__isCompleted' : 'List__isActive'}">
           <label class="list-item">
             <input class="checkbox" type="checkbox"/>
             <span class="todo-text">${item.value}</span>
@@ -61,6 +91,12 @@ const initTaskListeners = () => {
 
   listElements.forEach((element, index) => {
     element.addEventListener('click', (event) => toggleCompletdTask(event, index));
+  });
+
+  clearButtonElement.addEventListener('click', deleteCompletedTasks);
+  
+  filterButtonElements.forEach((button) => {
+    button.addEventListener('click', () => filterTasks(button.innerHTML));
   });
 };
 /* eslint-enable */
@@ -90,14 +126,14 @@ const toggleDarkMode = () => {
   const oldSrc = 'images/icon-moon.svg';
   const newSrc = 'images/icon-sun.svg';
   let isDarkMode = false;
-
+  
   // Check if dark mode flag exists in local storage
   if (fetchData('darkModeFlag')) {
     isDarkMode = true;
     // Toggle the 'App--isDark' class
     bodyElement.classList.add('App--isDark');
   }
-
+  
   appThemetoggleElement.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
 
@@ -116,11 +152,11 @@ const toggleDarkMode = () => {
 // ToggleCompletedTask
 const toggleCompletdTask = (event, index) => {
   const tasks = fetchData('tasks');
-
+  
   event.currentTarget.parentElement.classList.toggle('List__isCompleted');
   tasks[index].isCompleted = !tasks[index].isCompleted;
   saveToDB('tasks', tasks);
-}
+};
 
 // RenderEmptyState Function
 const renderEmptyState = () => {
@@ -128,19 +164,28 @@ const renderEmptyState = () => {
   <p class="emptyState">
   List is currently empty.</p>
   `;
+  countItemLeft();
+};
+
+// CountItmesLeft
+const countItemLeft = () => {
+  itemsLeftElement.innerHTML = taskListElement.querySelectorAll('li').length;
 };
 
 addTaskButton.addEventListener('click', addTask);
 /* eslint-disable */
 const initDataOnStartup = () => {
-  fetchData('darkModeFlag') ? toggleDarkMode() : toggleDarkMode(); 
+  fetchData('darkModeFlag') ? toggleDarkMode() : toggleDarkMode();
   initTaskList(fetchData('tasks'));
 };
 
+// InitTaskList Function
 const initTaskList = (tasks) => {
-  if (tasks?.length) {  
-    renderTaskList(fetchData('tasks'))
+  const data = tasks || fetchData('tasks') || []; // Use provided tasks. Otherwise, try to fetch tasks from the database
+  if (data.length) {
+    renderTaskList(data);
     initTaskListeners();
+    countItemLeft();
   } else {
     renderEmptyState();
   }

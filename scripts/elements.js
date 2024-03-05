@@ -4,5 +4,8 @@ export const bodyElement = document.querySelector('body');
 export const addTaskButton = document.querySelector('.app__search-bar__button');
 export const inputElement = document.querySelector('.app__search-bar__input');
 export const taskListElement = document.querySelector('.app__task-list__list');
+export const itemsLeftElement = document.querySelector('.items--number');
+export const clearButtonElement = document.querySelector('.clear-button');
 export const getDeleteElements = () => document.querySelectorAll('.remove');
 export const getListItemElements = () => document.querySelectorAll('.list-item');
+export const filterButtonElements = document.querySelectorAll('.filter__button');

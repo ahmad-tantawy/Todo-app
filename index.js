@@ -25,15 +25,14 @@ const saveToDB = (key, data) => {
 
 /* eslint-disable */
 // DeleteTask
-const deleteTask = (index) => {
-  const answer = confirm('Are you sure you want to delete?');
-  if (answer === false) return;
-
-  const tasks = fetchData('tasks');
-  tasks.splice(index, 1);
-
-  saveToDB('tasks', tasks);
-  initTaskList(tasks);
+const deleteTask = (index, element) => {
+  element.parentElement.classList.add('deleted')
+  setTimeout(() => {
+    const tasks = fetchData('tasks');
+    tasks.splice(index, 1);
+    saveToDB('tasks', tasks);
+    initTaskList(tasks);
+  }, 400);
 };
 
 // DeleteCompletedTask
@@ -68,7 +67,7 @@ const renderTaskList = (tasks) => {
   let taskList = '';
   tasks.forEach((item) => {
     taskList += `
-    <li class="${item.isCompleted ? 'List__isCompleted' : 'List__isActive'}">
+    <li class="draggable ${item.isCompleted ? 'List__isCompleted' : 'List__isActive'}" draggable="true">
           <label class="list-item">
             <input class="checkbox" type="checkbox"/>
             <span class="todo-text">${item.value}</span>
@@ -86,7 +85,7 @@ const initTaskListeners = () => {
   const listElements = getListItemElements();
 
   deleteElements.forEach((element, index) => {
-    element.addEventListener('click', () => deleteTask(index));
+    element.addEventListener('click', () => deleteTask(index, element));
   });
 
   listElements.forEach((element, index) => {
@@ -178,6 +177,44 @@ const initDataOnStartup = () => {
   fetchData('darkModeFlag') ? toggleDarkMode() : toggleDarkMode();
   initTaskList(fetchData('tasks'));
 };
+// /* eslint-enable */
+
+// Function to initialize drag and drop functionality
+const initDragAndDrop = () => {
+  let draggingElement;
+
+  taskListElement.addEventListener('dragstart', (event) => {
+    draggingElement = event.target.closest('.draggable');
+    if (draggingElement) {
+      draggingElement.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', draggingElement.innerHTML);
+    }
+  });
+
+  taskListElement.addEventListener('dragend', (event) => {
+    if (draggingElement) {
+      draggingElement.classList.remove('dragging');
+      draggingElement = null;
+    }
+  });
+
+  taskListElement.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    const target = event.target.closest('.draggable');
+    if (draggingElement && target && draggingElement !== target) {
+      const bounding = target.getBoundingClientRect();
+      const offset = bounding.y + bounding.height / 2;
+      if (event.clientY < offset) {
+        taskListElement.insertBefore(draggingElement, target);
+      } else {
+        taskListElement.insertBefore(draggingElement, target.nextSibling);
+      }
+    }
+  });
+};
+
+initDragAndDrop();
 
 // InitTaskList Function
 const initTaskList = (tasks) => {

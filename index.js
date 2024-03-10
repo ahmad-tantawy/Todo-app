@@ -8,8 +8,10 @@ import {
   getDeleteElements,
   getListItemElements,
   itemsLeftElement,
+  allButtonElement,
+  activeButtonElement,
+  completedButtonElement,
   clearButtonElement,
-  filterButtonElements,
 } from './scripts/elements';
 
 // fetchData
@@ -26,7 +28,7 @@ const saveToDB = (key, data) => {
 /* eslint-disable */
 // DeleteTask
 const deleteTask = (index, element) => {
-  element.parentElement.classList.add('deleted')
+  element.parentElement.classList.add('deleted');
   setTimeout(() => {
     const tasks = fetchData('tasks');
     tasks.splice(index, 1);
@@ -43,23 +45,26 @@ const deleteCompletedTasks = () => {
   initTaskList(fetchData('tasks'));
 };
 
-// FilterListElement
-const filterTasks = (button) => {
+// All list Element Filter function
+const filterAllElements = () => {
   const tasks = fetchData('tasks') || [];
-  if (tasks.length === 0) return;
-  
-  let newTasks = [];
-  if (button == 'Completed') {
-    newTasks = tasks.filter((task) => task.isCompleted);
-  } else if (button == 'Active') {
-    newTasks = tasks.filter((task) => !task.isCompleted);
-  } else if (button == 'Clear Completed') {
-    deleteCompletedTasks();
-    return;
-  } else {
-    newTasks = tasks;
-  }
+  initTaskList(tasks);
+};
+
+// Active button Filter function
+const filterActiveElements = () => {
+  const tasks = fetchData('tasks') || [];
+  const newTasks = tasks.filter((task) => !task.isCompleted);
   initTaskList(newTasks);
+  countItemLeft();
+};
+
+// Completed button Filter function
+const filterCompletedElements = () => {
+  const tasks = fetchData('tasks') || [];
+  const newTasks = tasks.filter((task) => task.isCompleted);
+  initTaskList(newTasks);
+  countItemLeft();
 };
 
 // RenderTaskList
@@ -79,6 +84,14 @@ const renderTaskList = (tasks) => {
   inputElement.value = '';
 };
 
+// Button Listener
+const initButtonsListeners = () => {
+  clearButtonElement.addEventListener('click', deleteCompletedTasks);
+  allButtonElement.addEventListener('click',  filterAllElements);
+  activeButtonElement.addEventListener('click', filterActiveElements);
+  completedButtonElement.addEventListener('click', filterCompletedElements);
+}
+
 // InitTaskListeners Function
 const initTaskListeners = () => {
   const deleteElements = getDeleteElements();
@@ -92,11 +105,7 @@ const initTaskListeners = () => {
     element.addEventListener('click', (event) => toggleCompletdTask(event, index));
   });
 
-  clearButtonElement.addEventListener('click', deleteCompletedTasks);
-  
-  filterButtonElements.forEach((button) => {
-    button.addEventListener('click', () => filterTasks(button.innerHTML));
-  });
+  initButtonsListeners();
 };
 /* eslint-enable */
 
@@ -172,12 +181,10 @@ const countItemLeft = () => {
 };
 
 addTaskButton.addEventListener('click', addTask);
-/* eslint-disable */
 const initDataOnStartup = () => {
   fetchData('darkModeFlag') ? toggleDarkMode() : toggleDarkMode();
   initTaskList(fetchData('tasks'));
 };
-// /* eslint-enable */
 
 // Function to initialize drag and drop functionality
 const initDragAndDrop = () => {
@@ -214,8 +221,6 @@ const initDragAndDrop = () => {
   });
 };
 
-initDragAndDrop();
-
 // InitTaskList Function
 const initTaskList = (tasks) => {
   const data = tasks || fetchData('tasks') || []; // Use provided tasks. Otherwise, try to fetch tasks from the database
@@ -229,3 +234,4 @@ const initTaskList = (tasks) => {
 };
 
 initDataOnStartup();
+initDragAndDrop();

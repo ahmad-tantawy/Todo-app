@@ -91,7 +91,7 @@ body,
 
 .dragging {
 	transition: transform 0.3s ease;
-	border: 1px solid #3a7bfd;
+	border-bottom: 1px solid #3a7bfd;
 	background-color: #d0d1d693;
 }
 
@@ -363,7 +363,7 @@ body,
 
 // Delete animation
 .deleted {
-	animation: fadeOutMoveLeft 0.3s forwards;
+	animation: fadeOutMoveLeft 0.4s forwards;
 	border-bottom: 1px solid #3a7bfd;
 }
 
@@ -375,7 +375,7 @@ body,
 
 	100% {
 		opacity: 0;
-		transform: translateX(-100px);
+		transform: translateX(-150px);
 	}
 }
 
@@ -409,6 +409,7 @@ body,
 		}
 		.app__task-list__list {
 			border-radius: 0.5rem 0.5rem 0 0;
+			background-color: var(--very-dark-desaturated-blue);
 			& .todo-text {
 				color: var(--light-grayish-blue);
 			}

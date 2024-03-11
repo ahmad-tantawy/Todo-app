@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   appThemetoggleElement,
   bodyElement,
@@ -25,14 +26,16 @@ const saveToDB = (key, data) => {
   localStorage.setItem(key, JSON.stringify(data));
 };
 
-/* eslint-disable */
 // DeleteTask
-const deleteTask = (index, element) => {
-  element.parentElement.classList.add('deleted');
+const deleteTask = (event) => {
+  const tasks = fetchData('tasks');
+  const taskValue = event.target.closest('li').querySelector('.todo-text').textContent;
+
+  tasks.splice(tasks.findIndex((task) => task.value === taskValue), 1);
+  saveToDB('tasks', tasks);
+
+  event.target.closest('li').classList.add('deleted');
   setTimeout(() => {
-    const tasks = fetchData('tasks');
-    tasks.splice(index, 1);
-    saveToDB('tasks', tasks);
     initTaskList(tasks);
   }, 400);
 };
@@ -87,27 +90,36 @@ const renderTaskList = (tasks) => {
 // Button Listener
 const initButtonsListeners = () => {
   clearButtonElement.addEventListener('click', deleteCompletedTasks);
-  allButtonElement.addEventListener('click',  filterAllElements);
+  allButtonElement.addEventListener('click', filterAllElements);
   activeButtonElement.addEventListener('click', filterActiveElements);
   completedButtonElement.addEventListener('click', filterCompletedElements);
-}
+};
 
 // InitTaskListeners Function
 const initTaskListeners = () => {
   const deleteElements = getDeleteElements();
   const listElements = getListItemElements();
 
-  deleteElements.forEach((element, index) => {
-    element.addEventListener('click', () => deleteTask(index, element));
+  deleteElements.forEach((element) => {
+    element.addEventListener('click', (event) => deleteTask(event));
   });
 
-  listElements.forEach((element, index) => {
-    element.addEventListener('click', (event) => toggleCompletdTask(event, index));
+  listElements.forEach((element) => {
+    element.addEventListener('click', (event) => toggleCompletedTask(event));
   });
 
   initButtonsListeners();
 };
-/* eslint-enable */
+
+// Order ids to match array order
+function orderTaskIds() {
+  const tasks = fetchData('tasks') || [];
+
+  tasks.forEach((task, index) => {
+    task.id = index;
+  });
+  saveToDB('tasks', tasks);
+}
 
 // AddTask Function
 const addTask = (event) => {
@@ -117,6 +129,7 @@ const addTask = (event) => {
   if (!taskValue) return;
 
   const task = {
+    id: 0,
     value: taskValue,
     isCompleted: false,
   };
@@ -124,7 +137,7 @@ const addTask = (event) => {
   const tasks = fetchData('tasks') || [];
   tasks.push(task);
   saveToDB('tasks', tasks);
-  /* eslint-disable */
+  orderTaskIds();
   initTaskList(tasks);
 };
 
@@ -134,14 +147,14 @@ const toggleDarkMode = () => {
   const oldSrc = 'images/icon-moon.svg';
   const newSrc = 'images/icon-sun.svg';
   let isDarkMode = false;
-  
+
   // Check if dark mode flag exists in local storage
   if (fetchData('darkModeFlag')) {
     isDarkMode = true;
     // Toggle the 'App--isDark' class
     bodyElement.classList.add('App--isDark');
   }
-  
+
   appThemetoggleElement.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
 
@@ -157,12 +170,13 @@ const toggleDarkMode = () => {
   });
 };
 
-// ToggleCompletedTask
-const toggleCompletdTask = (event, index) => {
+const toggleCompletedTask = (event) => {
   const tasks = fetchData('tasks');
-  
+  const taskValue = event.target.nextElementSibling.textContent;
+  const taskIndex = tasks.findIndex((task) => task.value === taskValue);
+
+  tasks[taskIndex].isCompleted = !tasks[taskIndex].isCompleted;
   event.currentTarget.parentElement.classList.toggle('List__isCompleted');
-  tasks[index].isCompleted = !tasks[index].isCompleted;
   saveToDB('tasks', tasks);
 };
 

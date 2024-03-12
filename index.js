@@ -13,6 +13,7 @@ import {
   activeButtonElement,
   completedButtonElement,
   clearButtonElement,
+  getCurrentListElements,
 } from './scripts/elements';
 
 // fetchData
@@ -21,8 +22,8 @@ const fetchData = (key) => {
   return data ? JSON.parse(data) : false;
 };
 
-// SaveToDB
-const saveToDB = (key, data) => {
+// saveListElementsToLocalStorge
+const saveListElementsToLocalStorge = (key, data) => {
   localStorage.setItem(key, JSON.stringify(data));
 };
 
@@ -32,7 +33,7 @@ const deleteTask = (event) => {
   const taskValue = event.target.closest('li').querySelector('.todo-text').textContent;
 
   tasks.splice(tasks.findIndex((task) => task.value === taskValue), 1);
-  saveToDB('tasks', tasks);
+  saveListElementsToLocalStorge('tasks', tasks);
 
   event.target.closest('li').classList.add('deleted');
   setTimeout(() => {
@@ -42,20 +43,28 @@ const deleteTask = (event) => {
 
 // DeleteCompletedTask
 const deleteCompletedTasks = () => {
+  removeClassFromAllButtons();
+  allButtonElement.classList.add('blue--button');
+
   const tasks = fetchData('tasks') || [];
   const newTasks = tasks.filter((task) => !task.isCompleted);
-  saveToDB('tasks', newTasks);
+  saveListElementsToLocalStorge('tasks', newTasks);
   initTaskList(fetchData('tasks'));
 };
 
 // All list Element Filter function
 const filterAllElements = () => {
+  removeClassFromAllButtons();
+  allButtonElement.classList.add('blue--button');
   const tasks = fetchData('tasks') || [];
   initTaskList(tasks);
 };
 
 // Active button Filter function
 const filterActiveElements = () => {
+  removeClassFromAllButtons();
+  activeButtonElement.classList.add('blue--button');
+
   const tasks = fetchData('tasks') || [];
   const newTasks = tasks.filter((task) => !task.isCompleted);
   initTaskList(newTasks);
@@ -64,6 +73,9 @@ const filterActiveElements = () => {
 
 // Completed button Filter function
 const filterCompletedElements = () => {
+  removeClassFromAllButtons();
+  completedButtonElement.classList.add('blue--button');
+
   const tasks = fetchData('tasks') || [];
   const newTasks = tasks.filter((task) => task.isCompleted);
   initTaskList(newTasks);
@@ -85,6 +97,13 @@ const renderTaskList = (tasks) => {
   });
   taskListElement.innerHTML = taskList;
   inputElement.value = '';
+};
+
+// removeClassFromAllButtons Function
+const removeClassFromAllButtons = () => {
+  allButtonElement.classList.remove('blue--button');
+  activeButtonElement.classList.remove('blue--button');
+  completedButtonElement.classList.remove('blue--button');
 };
 
 // Button Listener
@@ -111,33 +130,61 @@ const initTaskListeners = () => {
   initButtonsListeners();
 };
 
-// Order ids to match array order
-function orderTaskIds() {
-  const tasks = fetchData('tasks') || [];
+// convertNodeListToArrayOfObjects function
+const convertNodeListToArrayOfObjects = (nodeList) => Array.from(nodeList).map((node) => {
+  const value = node.innerText;
+  const isCompleted = node.classList.contains('List__isCompleted');
+  return { value, isCompleted };
+});
 
-  tasks.forEach((task, index) => {
-    task.id = index;
+// Order Localstorge list based on index after the user darg and drop
+const updateLocalStorageWithNewOrder = () => {
+  const newOrderedList = convertNodeListToArrayOfObjects(getCurrentListElements());
+  saveListElementsToLocalStorge('tasks', newOrderedList);
+};
+
+// /* eslint-enable */ /// /////////////////
+// IstaskValueValid Function
+const isTaskValueValid = (taskValue) => {
+  const currentValue = getCurrentListElements();
+  const currentValueArray = [...currentValue];
+
+  if (currentValueArray.length === 0) return true;
+
+  const isValueExists = currentValueArray.some((element) => {
+    const value = element.textContent.trim();
+    return value === taskValue;
   });
-  saveToDB('tasks', tasks);
-}
+
+  if (isValueExists) {
+    throw new Error(`'${taskValue}' is already in the list.`);
+  }
+
+  return true;
+};
 
 // AddTask Function
 const addTask = (event) => {
   event.preventDefault();
   const taskValue = inputElement.value;
 
-  if (!taskValue) return;
+  try {
+    if (!taskValue || !isTaskValueValid(taskValue)) {
+      return;
+    }
+  } catch (error) {
+    alert(error.message);
+    return;
+  }
 
   const task = {
-    id: 0,
     value: taskValue,
     isCompleted: false,
   };
 
   const tasks = fetchData('tasks') || [];
   tasks.push(task);
-  saveToDB('tasks', tasks);
-  orderTaskIds();
+  saveListElementsToLocalStorge('tasks', tasks);
   initTaskList(tasks);
 };
 
@@ -160,7 +207,7 @@ const toggleDarkMode = () => {
 
     // Toggle the 'App--isDark' class
     bodyElement.classList.toggle('App--isDark');
-    saveToDB('darkModeFlag', bodyElement?.classList.contains('App--isDark'));
+    saveListElementsToLocalStorge('darkModeFlag', bodyElement?.classList.contains('App--isDark'));
     // Update the image source based on the isDarkMode flag
     if (isDarkMode) {
       appThemetoggleElementImage.setAttribute('src', newSrc);
@@ -177,7 +224,7 @@ const toggleCompletedTask = (event) => {
 
   tasks[taskIndex].isCompleted = !tasks[taskIndex].isCompleted;
   event.currentTarget.parentElement.classList.toggle('List__isCompleted');
-  saveToDB('tasks', tasks);
+  saveListElementsToLocalStorge('tasks', tasks);
 };
 
 // RenderEmptyState Function
@@ -232,6 +279,9 @@ const initDragAndDrop = () => {
         taskListElement.insertBefore(draggingElement, target.nextSibling);
       }
     }
+    // here shuld be if statment to handle if order form active or completed list
+    if(!allButtonElement.classList.contains('blue--button')) return;
+      updateLocalStorageWithNewOrder();
   });
 };
 

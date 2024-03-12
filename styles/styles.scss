@@ -85,8 +85,8 @@ body,
 	font-family: var(--font-family);
 }
 
-.active--button {
-	color: #3a7bfd;
+.blue--button {
+	color: var(--active-button) !important;
 }
 
 .dragging {

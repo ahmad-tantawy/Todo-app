@@ -11,3 +11,4 @@ export const completedButtonElement = document.querySelector('.complete-button')
 export const clearButtonElement = document.querySelector('.clear-button');
 export const getDeleteElements = () => document.querySelectorAll('.remove');
 export const getListItemElements = () => document.querySelectorAll('.list-item');
+export const getCurrentListElements = () => document.querySelectorAll('.draggable');

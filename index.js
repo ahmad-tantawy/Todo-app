@@ -2,7 +2,8 @@
 import {
   appThemetoggleElement,
   bodyElement,
-  appThemetoggleElementImage,
+  appThemetoggleElementDark,
+  appThemetoggleElementLight,
   addTaskButton,
   inputElement,
   taskListElement,
@@ -191,15 +192,11 @@ const addTask = (event) => {
 
 // DarkTheme
 const toggleDarkMode = () => {
-  // Store the old and new image sources
-  const oldSrc = './images/icon-sun.svg';
-  const newSrc = './images/icon-moon.svg';
   let isDarkMode = false;
 
   // Check if dark mode flag exists in local storage
   if (fetchData('darkModeFlag')) {
     isDarkMode = true;
-    // Toggle the 'App--isDark' class
     bodyElement.classList.add('App--isDark');
   }
 
@@ -209,12 +206,6 @@ const toggleDarkMode = () => {
     // Toggle the 'App--isDark' class
     bodyElement.classList.toggle('App--isDark');
     saveListElementsToLocalStorge('darkModeFlag', bodyElement?.classList.contains('App--isDark'));
-    // Update the image source based on the isDarkMode flag
-    if (isDarkMode) {
-      appThemetoggleElementImage.setAttribute('src', newSrc);
-    } else {
-      appThemetoggleElementImage.setAttribute('src', oldSrc);
-    }
   });
 };
 

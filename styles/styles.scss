@@ -154,11 +154,24 @@ body,
 			width: 2.3rem;
 			height: 2.3rem;
 		}
+
+		&--img-dark {
+			display: none;
+		}
+	}
+
+	&__theme-toggle {
+		&--img-dark {
+			display: none;
+		}
+		&--img-light {
+			display: block;
+		}
 	}
 	// search-bar
 	&__search-bar {
 		width: 100%;
-		padding: 1.6rem 1.2rem;
+		padding: 1.6rem 1.5rem;
 		margin-top: 3rem;
 		background-color: var(--color-white);
 		border-radius: 0.5rem;
@@ -400,6 +413,13 @@ body,
 				background-size: cover;
 			}
 		}
+	}
+
+	.app__theme-toggle--img-light {
+		display: none;
+	}
+	.app__theme-toggle--img-dark {
+		display: block;
 	}
 
 	.app {

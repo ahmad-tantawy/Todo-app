@@ -90,9 +90,11 @@ body,
 }
 
 .dragging {
+	margin-left: 0.5rem;
+	border-radius: 0.7rem;
+	background-color: #e1e3eb93 !important;
+	border-bottom: 1px solid #3a7bfd !important;
 	transition: transform 0.3s ease;
-	border-bottom: 1px solid #3a7bfd;
-	background-color: #d0d1d693;
 }
 
 .app__wrapper {
@@ -386,7 +388,7 @@ body,
 // Delete animation
 .deleted {
 	animation: fadeOutMoveLeft 0.4s forwards;
-	border-bottom: 1px solid #3a7bfd;
+	border-bottom: 1px solid #3a7bfd !important;
 }
 
 @keyframes fadeOutMoveLeft {
@@ -420,6 +422,10 @@ body,
 	}
 	.app__theme-toggle--img-dark {
 		display: block;
+	}
+
+	.dragging {
+		background-color: #12268a93 !important;
 	}
 
 	.app {

@@ -192,8 +192,8 @@ const addTask = (event) => {
 // DarkTheme
 const toggleDarkMode = () => {
   // Store the old and new image sources
-  const oldSrc = '/images/icon-sun.svg';
-  const newSrc = '/images/icon-moon.svg';
+  const oldSrc = './images/icon-sun.svg';
+  const newSrc = './images/icon-moon.svg';
   let isDarkMode = false;
 
   // Check if dark mode flag exists in local storage

@@ -174,6 +174,7 @@ const addTask = (event) => {
     }
   } catch (error) {
     alert(error.message);
+    inputElement.value = '';
     return;
   }
 
@@ -191,8 +192,8 @@ const addTask = (event) => {
 // DarkTheme
 const toggleDarkMode = () => {
   // Store the old and new image sources
-  const oldSrc = 'images/icon-moon.svg';
-  const newSrc = 'images/icon-sun.svg';
+  const oldSrc = '/images/icon-sun.svg';
+  const newSrc = '/images/icon-moon.svg';
   let isDarkMode = false;
 
   // Check if dark mode flag exists in local storage
@@ -280,22 +281,39 @@ const initDragAndDrop = () => {
       }
     }
     // here shuld be if statment to handle if order form active or completed list
-    if(!allButtonElement.classList.contains('blue--button')) return;
-      updateLocalStorageWithNewOrder();
+    if (!allButtonElement.classList.contains('blue--button')) return;
+    updateLocalStorageWithNewOrder();
   });
+};
+
+// Initialization data for frontend mentor
+const initializeApp = () => {
+  if (!localStorage.getItem('appInitialized')) {
+    const data = [
+      { value: 'Complete online JavaScript course', isCompleted: true },
+      { value: 'Jog around the park 3x', isCompleted: false },
+      { value: '10 minutes meditation', isCompleted: false },
+      { value: 'Read for 1 hour', isCompleted: false },
+      { value: 'Pick up groceries', isCompleted: false },
+      { value: 'Complete Todo App on Frontend Mentor', isCompleted: false },
+    ];
+    localStorage.setItem('appInitialized', true);
+    saveListElementsToLocalStorge('tasks', data);
+  }
 };
 
 // InitTaskList Function
 const initTaskList = (tasks) => {
   const data = tasks || fetchData('tasks') || []; // Use provided tasks. Otherwise, try to fetch tasks from the database
-  if (data.length) {
-    renderTaskList(data);
-    initTaskListeners();
-    countItemLeft();
-  } else {
+  if (!data.length) {
     renderEmptyState();
+    return;
   }
+  renderTaskList(data);
+  initTaskListeners();
+  countItemLeft();
 };
 
+initializeApp();
 initDataOnStartup();
 initDragAndDrop();

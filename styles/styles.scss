@@ -310,6 +310,7 @@ body,
 				color: var(--medium-dark-grayish-blue);
 				border-radius: 5px 5px 0 0;
 				background-color: var(--color-white);
+				border-bottom: 0.01rem solid var(--very-light-grayish-blue);
 			}
 			.app__wrapper {
 				position: relative;
@@ -450,6 +451,7 @@ body,
 			}
 			.emptyState {
 				background-color: var(--very-dark-desaturated-blue);
+				border-color: var(--midnight-blue);
 			}
 			&::-webkit-scrollbar-track {
 				background: var(--very-dark-desaturated-blue);

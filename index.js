@@ -2,14 +2,11 @@
 import {
   appThemetoggleElement,
   bodyElement,
-  appThemetoggleElementDark,
-  appThemetoggleElementLight,
   addTaskButton,
   inputElement,
   taskListElement,
   getDeleteElements,
   getListItemElements,
-  itemsLeftElement,
   allButtonElement,
   activeButtonElement,
   completedButtonElement,
@@ -17,16 +14,18 @@ import {
   getCurrentListElements,
 } from './scripts/elements';
 
-// fetchData
-const fetchData = (key) => {
-  const data = localStorage.getItem(key);
-  return data ? JSON.parse(data) : false;
-};
-
-// saveListElementsToLocalStorge
-const saveListElementsToLocalStorge = (key, data) => {
-  localStorage.setItem(key, JSON.stringify(data));
-};
+import {
+  fetchData,
+  saveListElementsToLocalStorge,
+  renderTaskList,
+  removeClassFromAllButtons,
+  convertNodeListToArrayOfObjects,
+  isTaskValueValid,
+  toggleCompletedTask,
+  renderEmptyState,
+  countItemLeft,
+  initializeApp,
+} from './scripts/utils';
 
 // DeleteTask
 const deleteTask = (event) => {
@@ -40,6 +39,8 @@ const deleteTask = (event) => {
   setTimeout(() => {
     initTaskList(tasks);
   }, 400);
+  removeClassFromAllButtons();
+  allButtonElement.classList.add('blue--button');
 };
 
 // DeleteCompletedTask
@@ -83,30 +84,6 @@ const filterCompletedElements = () => {
   countItemLeft();
 };
 
-// RenderTaskList
-const renderTaskList = (tasks) => {
-  let taskList = '';
-  tasks.forEach((item) => {
-    taskList += `
-    <li class="draggable ${item.isCompleted ? 'List__isCompleted' : 'List__isActive'}" draggable="true">
-          <label class="list-item">
-            <input class="checkbox" type="checkbox"/>
-            <span class="todo-text">${item.value}</span>
-          </label>
-          <span class="remove"></span>
-    </li>`;
-  });
-  taskListElement.innerHTML = taskList;
-  inputElement.value = '';
-};
-
-// removeClassFromAllButtons Function
-const removeClassFromAllButtons = () => {
-  allButtonElement.classList.remove('blue--button');
-  activeButtonElement.classList.remove('blue--button');
-  completedButtonElement.classList.remove('blue--button');
-};
-
 // Button Listener
 const initButtonsListeners = () => {
   clearButtonElement.addEventListener('click', deleteCompletedTasks);
@@ -125,43 +102,16 @@ const initTaskListeners = () => {
   });
 
   listElements.forEach((element) => {
-    element.addEventListener('click', (event) => toggleCompletedTask(event));
+    element.addEventListener('click', (event) => toggleCompletedTask(event.currentTarget));
   });
 
   initButtonsListeners();
 };
 
-// convertNodeListToArrayOfObjects function
-const convertNodeListToArrayOfObjects = (nodeList) => Array.from(nodeList).map((node) => {
-  const value = node.innerText;
-  const isCompleted = node.classList.contains('List__isCompleted');
-  return { value, isCompleted };
-});
-
 // Order Localstorge list based on index after the user darg and drop
 const updateLocalStorageWithNewOrder = () => {
   const newOrderedList = convertNodeListToArrayOfObjects(getCurrentListElements());
   saveListElementsToLocalStorge('tasks', newOrderedList);
-};
-
-// /* eslint-enable */ /// /////////////////
-// IstaskValueValid Function
-const isTaskValueValid = (taskValue) => {
-  const currentValue = getCurrentListElements();
-  const currentValueArray = [...currentValue];
-
-  if (currentValueArray.length === 0) return true;
-
-  const isValueExists = currentValueArray.some((element) => {
-    const value = element.textContent.trim();
-    return value === taskValue;
-  });
-
-  if (isValueExists) {
-    throw new Error(`'${taskValue}' is already in the list.`);
-  }
-
-  return true;
 };
 
 // AddTask Function
@@ -209,32 +159,8 @@ const toggleDarkMode = () => {
   });
 };
 
-const toggleCompletedTask = (event) => {
-  const tasks = fetchData('tasks');
-  const taskValue = event.target.nextElementSibling.textContent;
-  const taskIndex = tasks.findIndex((task) => task.value === taskValue);
-
-  tasks[taskIndex].isCompleted = !tasks[taskIndex].isCompleted;
-  event.currentTarget.parentElement.classList.toggle('List__isCompleted');
-  saveListElementsToLocalStorge('tasks', tasks);
-};
-
-// RenderEmptyState Function
-const renderEmptyState = () => {
-  taskListElement.innerHTML = `
-  <p class="emptyState">
-  List is currently empty.</p>
-  `;
-  countItemLeft();
-};
-
-// CountItmesLeft
-const countItemLeft = () => {
-  itemsLeftElement.innerHTML = taskListElement.querySelectorAll('li').length;
-};
-
-addTaskButton.addEventListener('click', addTask);
 const initDataOnStartup = () => {
+  addTaskButton.addEventListener('click', addTask);
   fetchData('darkModeFlag') ? toggleDarkMode() : toggleDarkMode();
   initTaskList(fetchData('tasks'));
 };
@@ -252,7 +178,7 @@ const initDragAndDrop = () => {
     }
   });
 
-  taskListElement.addEventListener('dragend', (event) => {
+  taskListElement.addEventListener('dragend', () => {
     if (draggingElement) {
       draggingElement.classList.remove('dragging');
       draggingElement = null;
@@ -275,22 +201,6 @@ const initDragAndDrop = () => {
     if (!allButtonElement.classList.contains('blue--button')) return;
     updateLocalStorageWithNewOrder();
   });
-};
-
-// Initialization data for frontend mentor
-const initializeApp = () => {
-  if (!localStorage.getItem('appInitialized')) {
-    const data = [
-      { value: 'Complete online JavaScript course', isCompleted: true },
-      { value: 'Jog around the park 3x', isCompleted: false },
-      { value: '10 minutes meditation', isCompleted: false },
-      { value: 'Read for 1 hour', isCompleted: false },
-      { value: 'Pick up groceries', isCompleted: false },
-      { value: 'Complete Todo App on Frontend Mentor', isCompleted: false },
-    ];
-    localStorage.setItem('appInitialized', true);
-    saveListElementsToLocalStorge('tasks', data);
-  }
 };
 
 // InitTaskList Function

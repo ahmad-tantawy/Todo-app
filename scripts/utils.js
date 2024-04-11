@@ -107,6 +107,7 @@ export const initializeApp = () => {
       { value: 'Complete Todo App on Frontend Mentor', isCompleted: false },
     ];
     localStorage.setItem('appInitialized', true);
+    saveListElementsToLocalStorge('darkModeFlag', true);
     saveListElementsToLocalStorge('tasks', data);
   }
 };
